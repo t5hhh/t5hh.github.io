@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<!-- saved from url=(0032)https://kald112.github.io/t5h_/ -->
+<html lang="ar"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MUSIC</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* فيديو الخلفية */
+        .background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+            opacity: 0.3;
+        }
+
+        /* طبقة مظلمة فوق الفيديو */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: -1;
+        }
+
+        /* صفحة التحميل */
+        .loading-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            z-index: 10;
+            width: 100%;
+        }
+
+        /* النص العلوي */
+        .top-text {
+            position: absolute;
+            top: 15%;
+            right: 10%;
+            font-size: 2.5em;
+            color: #ff3333;
+            text-shadow: 0 0 20px #ff3333, 0 0 40px #ff3333;
+            font-weight: bold;
+            direction: rtl;
+            animation: glow-red 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow-red {
+            from {
+                text-shadow: 0 0 20px #ff3333, 0 0 40px #ff3333;
+            }
+            to {
+                text-shadow: 0 0 30px #ff6666, 0 0 60px #ff6666;
+            }
+        }
+
+        /* أيقونة الموسيقى */
+        .music-icon {
+            font-size: 2em;
+            color: #ff3333;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* شريط التحميل */
+        .loading-bar-container {
+            width: 400px;
+            height: 20px;
+            background: #333;
+            border-radius: 25px;
+            overflow: hidden;
+            margin: 30px 0;
+            border: 2px solid #555;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .loading-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff00, #66ff66, #00ff00);
+            width: 0%;
+            border-radius: 25px;
+            animation: loading 1.5s ease-in-out forwards;
+            box-shadow: 0 0 15px #00ff00;
+        }
+
+        @keyframes loading {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* العنوان الرئيسي */
+        .main-title {
+            font-size: 3em;
+            color: #fff;
+            margin: 20px 0;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+            letter-spacing: 8px;
+            animation: pulse-white 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse-white {
+            0%, 100% {
+                text-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+                transform: scale(1);
+            }
+            50% {
+                text-shadow: 0 0 50px rgba(255, 255, 255, 1);
+                transform: scale(1.02);
+            }
+        }
+
+        /* العنوان الفرعي */
+        .subtitle {
+            font-size: 2em;
+            color: #ccc;
+            margin: 20px 0;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            letter-spacing: 3px;
+            direction: rtl;
+        }
+
+        /* رابط الديسكورد */
+        .discord-link {
+            font-size: 1.5em;
+            color: #ffd700;
+            margin-top: 40px;
+            text-shadow: 0 0 25px #ffd700;
+            letter-spacing: 2px;
+            font-family: 'Courier New', monospace;
+            animation: glow-gold 2.5s ease-in-out infinite alternate;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .discord-link:hover {
+            color: #ffed4e;
+            text-shadow: 0 0 35px #ffed4e, 0 0 50px #ffed4e;
+            transform: scale(1.05);
+        }
+
+        @keyframes glow-gold {
+            from {
+                text-shadow: 0 0 25px #ffd700;
+            }
+            to {
+                text-shadow: 0 0 35px #ffed4e, 0 0 50px #ffed4e;
+            }
+        }
+
+        /* المحتوى الرئيسي (مخفي في البداية) */
+        .main-content {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            z-index: 10;
+            animation: fadeIn 2s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* تنسيق الصورة */
+        .logo-image {
+            width: 200px;
+            height: auto;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+            animation: pulse-white 3s ease-in-out infinite;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* تأثيرات الجسيمات */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: float 6s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- فيديو الخلفية -->
+    <video class="background-video" autoplay="" loop="" muted="">
+        <source src="https://d.top4top.io/m_349743l3o1.mp4" type="video/mp4">
+    </video>
+    
+    <!-- الموسيقى الخلفية -->
+    <audio id="background-music" autoplay="" loop="">
+        <source src="https://c.top4top.io/m_3497iid171.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- طبقة مظلمة -->
+    <div class="overlay"></div>
+
+    <!-- تأثير الجسيمات -->
+    <div class="particles" id="particles"><div class="particle" style="left: 87.6256%; animation-delay: 2.46779s; animation-duration: 4.21449s;"></div><div class="particle" style="left: 9.41541%; animation-delay: 4.38086s; animation-duration: 4.28429s;"></div><div class="particle" style="left: 90.396%; animation-delay: 1.69036s; animation-duration: 5.47087s;"></div><div class="particle" style="left: 15.5169%; animation-delay: 5.28804s; animation-duration: 5.88559s;"></div><div class="particle" style="left: 44.9433%; animation-delay: 0.731437s; animation-duration: 5.13226s;"></div><div class="particle" style="left: 26.7287%; animation-delay: 2.89235s; animation-duration: 4.08372s;"></div><div class="particle" style="left: 71.2341%; animation-delay: 4.15449s; animation-duration: 4.40132s;"></div><div class="particle" style="left: 0.154063%; animation-delay: 5.92868s; animation-duration: 4.89039s;"></div><div class="particle" style="left: 63.7529%; animation-delay: 2.70364s; animation-duration: 4.96165s;"></div><div class="particle" style="left: 89.8422%; animation-delay: 2.0902s; animation-duration: 4.60614s;"></div><div class="particle" style="left: 31.4323%; animation-delay: 0.105057s; animation-duration: 5.42234s;"></div><div class="particle" style="left: 16.6272%; animation-delay: 2.56638s; animation-duration: 3.81248s;"></div><div class="particle" style="left: 14.4954%; animation-delay: 3.68491s; animation-duration: 3.69488s;"></div><div class="particle" style="left: 3.77316%; animation-delay: 3.83569s; animation-duration: 5.40145s;"></div><div class="particle" style="left: 31.7513%; animation-delay: 2.13013s; animation-duration: 5.07543s;"></div><div class="particle" style="left: 91.0383%; animation-delay: 1.43566s; animation-duration: 3.04259s;"></div><div class="particle" style="left: 54.5693%; animation-delay: 4.71685s; animation-duration: 5.94364s;"></div><div class="particle" style="left: 74.2204%; animation-delay: 3.03362s; animation-duration: 5.92974s;"></div><div class="particle" style="left: 19.8479%; animation-delay: 2.93873s; animation-duration: 4.40832s;"></div><div class="particle" style="left: 41.5977%; animation-delay: 5.95022s; animation-duration: 5.84764s;"></div><div class="particle" style="left: 34.7072%; animation-delay: 0.0725746s; animation-duration: 4.99183s;"></div><div class="particle" style="left: 26.9868%; animation-delay: 3.57621s; animation-duration: 5.34945s;"></div><div class="particle" style="left: 66.101%; animation-delay: 1.58178s; animation-duration: 5.28042s;"></div><div class="particle" style="left: 86.9018%; animation-delay: 3.95703s; animation-duration: 4.94131s;"></div><div class="particle" style="left: 0.0330454%; animation-delay: 2.95999s; animation-duration: 5.66147s;"></div><div class="particle" style="left: 55.4631%; animation-delay: 5.93555s; animation-duration: 5.13546s;"></div><div class="particle" style="left: 65.9903%; animation-delay: 0.924439s; animation-duration: 3.79635s;"></div><div class="particle" style="left: 58.2335%; animation-delay: 1.08805s; animation-duration: 5.96339s;"></div><div class="particle" style="left: 52.2298%; animation-delay: 4.15901s; animation-duration: 5.10493s;"></div><div class="particle" style="left: 4.58777%; animation-delay: 2.81132s; animation-duration: 3.31444s;"></div><div class="particle" style="left: 80.851%; animation-delay: 3.05778s; animation-duration: 4.58835s;"></div><div class="particle" style="left: 10.1373%; animation-delay: 4.62644s; animation-duration: 4.35781s;"></div><div class="particle" style="left: 96.7085%; animation-delay: 2.86974s; animation-duration: 4.46724s;"></div><div class="particle" style="left: 54.2144%; animation-delay: 1.1107s; animation-duration: 5.36816s;"></div><div class="particle" style="left: 95.104%; animation-delay: 1.54783s; animation-duration: 5.19141s;"></div><div class="particle" style="left: 20.9573%; animation-delay: 5.70874s; animation-duration: 3.85663s;"></div><div class="particle" style="left: 36.0685%; animation-delay: 4.48604s; animation-duration: 3.17055s;"></div><div class="particle" style="left: 28.7847%; animation-delay: 4.44258s; animation-duration: 5.30522s;"></div><div class="particle" style="left: 40.4691%; animation-delay: 1.0364s; animation-duration: 5.09567s;"></div><div class="particle" style="left: 72.8947%; animation-delay: 2.74576s; animation-duration: 4.50755s;"></div><div class="particle" style="left: 6.89918%; animation-delay: 3.98214s; animation-duration: 5.69071s;"></div><div class="particle" style="left: 23.3249%; animation-delay: 3.97683s; animation-duration: 5.7989s;"></div><div class="particle" style="left: 56.7477%; animation-delay: 4.83424s; animation-duration: 3.21881s;"></div><div class="particle" style="left: 29.866%; animation-delay: 4.59069s; animation-duration: 3.02411s;"></div><div class="particle" style="left: 33.5816%; animation-delay: 4.77735s; animation-duration: 3.68298s;"></div><div class="particle" style="left: 63.549%; animation-delay: 5.58927s; animation-duration: 4.48401s;"></div><div class="particle" style="left: 13.4406%; animation-delay: 3.77802s; animation-duration: 5.0335s;"></div><div class="particle" style="left: 16.3932%; animation-delay: 0.801955s; animation-duration: 3.02562s;"></div><div class="particle" style="left: 33.3231%; animation-delay: 3.82102s; animation-duration: 4.24779s;"></div><div class="particle" style="left: 49.0138%; animation-delay: 4.71587s; animation-duration: 5.99245s;"></div></div>
+
+    <!-- صفحة التحميل -->
+    <div class="loading-screen" id="loading-screen" style="display: none;">
+        <!-- النص العلوي -->
+        <div class="top-text"></div>
+        
+        <!-- أيقونة الموسيقى -->
+        <div class="music-icon">لا اله الا الله</div>
+        
+        <!-- شريط التحميل -->
+        <div class="loading-bar-container">
+            <div class="loading-bar"></div>
+        </div>
+        
+        <!-- العنوان الرئيسي -->
+        <div class="main-title">  </div>
+        
+        <!-- العنوان الفرعي -->
+        <div class="subtitle"></div>
+        
+        <!-- رابط الديسكورد -->
+        <a href="https://discord.gg/5vxNKwDucp" class="discord-link">https://discord.gg/5vxNKwDucp</a>
+    </div>
+
+    <!-- المحتوى الرئيسي (مخفي) -->
+    <div class="main-content" id="main-content" style="display: flex;">
+        <img src="C:\Users\mjkhm\OneDrive\Desktop\MUSIC_files\22331234.jpg" alt="Music Logo" class="logo-image">
+        <div class="main-title">اية الكرسي</div>
+        <div class="subtitle"> اخوكم عبدالعزيز و اسف اني خربت عليكم سامحوني و حللوني </div>
+        <a href="https://discord.gg/5vxNKwDucp" class="discord-link">https://discord.gg/5vxNKwDucp</a>
+    </div>
+
+    <script>
+        // إنشاء الجسيمات المتطايرة
+        function createParticles() {
+            const particles = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                particles.appendChild(particle);
+            }
+        }
+
+        // تشغيل الجسيمات
+        createParticles();
+
+        // تشغيل الموسيقى فوراً
+        const audio = document.getElementById('background-music');
+        audio.volume = 0.7; // مستوى الصوت
+        audio.play().catch(function(error) {
+            console.log('الموسيقى ستشتغل بعد التفاعل الأول');
+            // إذا فشل التشغيل التلقائي، تشغيل مع أول تفاعل
+            document.addEventListener('click', function() {
+                audio.play();
+            }, { once: true });
+        });
+
+        // الانتقال من صفحة التحميل للمحتوى الرئيسي
+        setTimeout(function() {
+            const loadingScreen = document.getElementById('loading-screen');
+            const mainContent = document.getElementById('main-content');
+            
+            loadingScreen.style.display = 'none';
+            mainContent.style.display = 'flex';
+        }, 2000); // ثانيتين بس
+
+        // تحسين تشغيل الفيديو
+        const video = document.querySelector('.background-video');
+        video.addEventListener('canplay', function() {
+            video.play().catch(function(error) {
+                console.log('خطأ في تشغيل الفيديو:', error);
+            });
+        });
+
+        // إضافة تأثيرات صوتية بصرية (اختيارية)
+        document.addEventListener('click', function() {
+            const particles = document.getElementById('particles');
+            for (let i = 0; i < 20; i++) {
+                const spark = document.createElement('div');
+                spark.className = 'particle';
+                spark.style.left = Math.random() * 100 + '%';
+                spark.style.top = Math.random() * 100 + '%';
+                spark.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                spark.style.animationDuration = '1s';
+                particles.appendChild(spark);
+                
+                setTimeout(function() {
+                    spark.remove();
+                }, 1000);
+            }
+        });
+    </script>
+
+
+</body></html>
